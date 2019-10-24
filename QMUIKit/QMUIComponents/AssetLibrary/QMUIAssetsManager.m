@@ -335,8 +335,13 @@ void QMUISaveVideoAtPathToSavedPhotosAlbumWithAlbumAssetsGroup(NSString *videoPa
         NSDate *exifDate = nil;
         if (takeDateStr.length > 0) {
             NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-            [formatter setDateFormat:@"YYYY:MM:DD HH:MM:SS"];
+            [formatter setDateFormat:@"yyyy:MM:dd HH:mm:ss"];
             exifDate = [formatter dateFromString:takeDateStr];
+            
+            if (exifDate == nil) {
+                [formatter setDateFormat:@"YYYY:MM:DD HH:MM:SS"];
+                exifDate = [formatter dateFromString:takeDateStr];
+            }
         }
         
         assetChangeRequest.creationDate = exifDate ? exifDate : [NSDate date];
