@@ -321,7 +321,26 @@ void QMUISaveVideoAtPathToSavedPhotosAlbumWithAlbumAssetsGroup(NSString *videoPa
             QMUILog(@"QMUIAssetLibrary", @"Creating asset with empty data");
             return;
         }
-        assetChangeRequest.creationDate = [NSDate date];
+        
+        CGImageSourceRef source = CGImageSourceCreateWithURL((CFURLRef)imagePathURL, NULL);
+
+        NSString *takeDateStr = @"";
+        if (source) {
+            CFDictionaryRef imageMetaData = CGImageSourceCopyPropertiesAtIndex(source, 0, NULL);
+            CFRelease(source);
+            NSDictionary *dict = CFBridgingRelease(imageMetaData);
+            takeDateStr = dict[@"{Exif}"][@"DateTimeOriginal"];
+            CFRelease(imageMetaData);
+        }
+        
+        NSDate *exifDate = nil;
+        if (takeDateStr.length > 0) {
+            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+            [formatter setDateFormat:@"YYYY:MM:DD HH:MM:SS"];
+            exifDate = [formatter dateFromString:takeDateStr];
+        }
+        
+        assetChangeRequest.creationDate = exifDate ? exifDate : [NSDate date];
         creationDate = assetChangeRequest.creationDate;
         
         if (albumAssetCollection.assetCollectionType == PHAssetCollectionTypeAlbum) {
