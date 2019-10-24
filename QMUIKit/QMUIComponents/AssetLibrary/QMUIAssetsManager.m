@@ -330,7 +330,6 @@ void QMUISaveVideoAtPathToSavedPhotosAlbumWithAlbumAssetsGroup(NSString *videoPa
             CFRelease(source);
             NSDictionary *dict = CFBridgingRelease(imageMetaData);
             takeDateStr = dict[@"{Exif}"][@"DateTimeOriginal"];
-            CFRelease(imageMetaData);
         }
         
         NSDate *exifDate = nil;
